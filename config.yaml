@@ -1,0 +1,6 @@
+left-menu-panel:
+  tree:
+    budgets:
+      - name: My budget
+      - name: Experimental budget
+    # supports slice or map
