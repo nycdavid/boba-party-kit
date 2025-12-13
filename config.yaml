@@ -1,6 +1,10 @@
 left-menu-panel:
   tree:
     budgets:
-      - name: My budget
-      - name: Experimental budget
+      # supports any kind of data: HTTP or static
+#      http:
+#        url: "https://api.ynab.com/v1/budgets"
+
+#      - name: My budget
+#      - name: Experimental budget
     # supports slice or map
