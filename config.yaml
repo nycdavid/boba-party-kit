@@ -4,4 +4,4 @@ search:
     auth:
       header:
         # the value of bearer: is read from the environment
-        bearer: "YNAB_API_TOKEN"
+        bearer-env-var: "YNAB_API_TOKEN"

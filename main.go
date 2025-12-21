@@ -20,16 +20,16 @@ type (
 	}
 
 	Data struct {
-		HTTP string `json:"http"`
-		Auth *Auth  `json:"auth"`
+		HTTP string `yaml:"http"`
+		Auth *Auth  `yaml:"auth"`
 	}
 
 	Auth struct {
-		Header *Header `json:"header"`
+		Header *Header `yaml:"header"`
 	}
 
 	Header struct {
-		Bearer string `json:"bearer"`
+		BearerEnvVar string `yaml:"bearer-env-var"`
 	}
 )
 
@@ -48,7 +48,10 @@ func main() {
 		// Search component
 		fmt.Println("Generating search component...")
 		hdc := httpdriver.NewClient()
-		a, err := hdc.Get(config.Search.Data.HTTP, config.Search.Data.Auth.Header.Bearer)
+		a, err := hdc.Get(
+			config.Search.Data.HTTP,
+			config.Search.Data.Auth.Header.BearerEnvVar,
+		)
 		if err != nil {
 			log.Fatal(err)
 		}
