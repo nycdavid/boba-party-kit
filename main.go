@@ -6,6 +6,7 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/nycdavid/boba-party-kit/pkg/httpdriver"
 	"gopkg.in/yaml.v3"
 )
 
@@ -46,6 +47,12 @@ func main() {
 	if config.Search != nil {
 		// Search component
 		fmt.Println("Generating search component...")
+		hdc := httpdriver.NewClient()
+		a, err := hdc.Get(config.Search.Data.HTTP, config.Search.Data.Auth.Header.Bearer)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(a)
 
 		p := tea.NewProgram(nil, tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
