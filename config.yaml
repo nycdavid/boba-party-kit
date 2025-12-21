@@ -1,10 +1,6 @@
-left-menu-panel:
-  tree:
-    budgets:
-      # supports any kind of data: HTTP or static
-#      http:
-#        url: "https://api.ynab.com/v1/budgets"
-
-#      - name: My budget
-#      - name: Experimental budget
-    # supports slice or map
+search:
+  data:
+    http: "https://api.ynab.com/v1/budgets"
+    auth:
+      header:
+        bearer: "YNAB_API_TOKEN"
