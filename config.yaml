@@ -3,4 +3,5 @@ search:
     http: "https://api.ynab.com/v1/budgets"
     auth:
       header:
+        # the value of bearer: is read from the environment
         bearer: "YNAB_API_TOKEN"
