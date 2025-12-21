@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"gopkg.in/yaml.v3"
 )
 
@@ -44,5 +46,10 @@ func main() {
 	if config.Search != nil {
 		// Search component
 		fmt.Println("Generating search component...")
+
+		p := tea.NewProgram(nil, tea.WithAltScreen())
+		if _, err := p.Run(); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
