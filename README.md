@@ -4,6 +4,17 @@
 
 Config file only [bubbletea](https://github.com/charmbracelet/bubbletea) TUI generator
 
+# Concepts
+
+## Named searches
+
+It's possible to have multiple searches in a single `config.yaml`.
+
+This makes sense when you're searching for one resource, find it and then want to search through its child resources.
+
+In this case, we want to define multiple _named searches_ in our `config.yaml` file under the `search:` key so we can
+reference one search from another in a given search's `select:` directive.
+
 # Components
 
 ## Search
