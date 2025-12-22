@@ -1,7 +1,8 @@
 search:
-  data:
-    http: "https://api.ynab.com/v1/budgets"
-    auth:
-      header:
-        # the value of bearer: is read from the environment
-        bearer-env-var: "YNAB_API_TOKEN"
+  init:
+    data:
+      http: "https://api.ynab.com/v1/budgets"
+      auth:
+        header:
+          # the value of bearer: is read from the environment
+          bearer-env-var: "YNAB_API_TOKEN"
