@@ -66,9 +66,16 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
+	l.components[0].Update(msg)
+
 	return l, nil
 }
 
 func (l *Layout) View() string {
-	return lipgloss.JoinHorizontal(0, l.components[0].View(), "")
+	var s string
+	for _, comp := range l.components {
+		s = lipgloss.JoinHorizontal(0, s, comp.View())
+	}
+
+	return s
 }

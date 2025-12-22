@@ -34,7 +34,9 @@ func (s *SearchBar) Init() tea.Cmd {
 }
 
 func (s *SearchBar) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return s, nil
+	var cmd tea.Cmd
+	s.textInput, cmd = s.textInput.Update(msg)
+	return s, cmd
 }
 
 func (s *SearchBar) View() string {
