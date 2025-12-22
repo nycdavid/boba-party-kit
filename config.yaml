@@ -1,4 +1,19 @@
 search:
+  transactions:
+    init:
+      http: "https://api.ynab.com/v1/budgets/:budget_id/transactions"
+      auth:
+        header:
+          bearer-env-var: "YNAB_API_TOKEN"
+    results:
+      table:
+        columns:
+          - name: "Date"
+            path: ".transactions[].date"
+          - name: "Payee name"
+            path: ".transactions[].payee_name"
+          - name: "Amount"
+            path: ".transactions[].amount"
   categories:
     init:
       http: "https://api.ynab.com/v1/budgets/:budget_id/categories"
@@ -14,7 +29,7 @@ search:
             path: ".categories[].name"
     select:
       named_search:
-
+        name: transactions
   budgets:
     init:
       http: "https://api.ynab.com/v1/budgets"
