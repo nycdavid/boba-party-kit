@@ -14,7 +14,7 @@ func NewClient() *Client {
 	return &Client{}
 }
 
-func (c *Client) Get(url, authEnvVar string) (any, error) {
+func (c *Client) Get(url, authEnvVar string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err

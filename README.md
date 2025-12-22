@@ -4,8 +4,22 @@
 
 Config file only [bubbletea](https://github.com/charmbracelet/bubbletea) TUI generator
 
-# Types of layouts
+# Components
 
 ## Search
 
 A fuzzy-search component.
+
+```yaml
+search:
+  init:
+  select:
+  results:
+    list:
+    table:
+
+```
+
+## Tree
+
+A multi-node, nested tree.

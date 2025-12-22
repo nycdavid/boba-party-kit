@@ -3,44 +3,22 @@ package layout
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/nycdavid/boba-party-kit/internal/config"
 	"github.com/nycdavid/boba-party-kit/pkg/components/searchbar"
+	"github.com/nycdavid/boba-party-kit/pkg/components/table"
 )
 
 type (
 	Layout struct {
-		config     *Config
+		config     *config.Config
 		components []tea.Model
-	}
-
-	Config struct {
-		Search *Search `yaml:"search"`
-	}
-
-	Init struct {
-		Data *Data `yaml:"data"`
-	}
-
-	Search struct {
-		Init *Init `yaml:"init"`
-	}
-
-	Data struct {
-		HTTP string `yaml:"http"`
-		Auth *Auth  `yaml:"auth"`
-	}
-
-	Auth struct {
-		Header *Header `yaml:"header"`
-	}
-
-	Header struct {
-		BearerEnvVar string `yaml:"bearer-env-var"`
+		focus      int
 	}
 
 	Mod func(*Layout)
 )
 
-func New(c *Config) *Layout {
+func New(c *config.Config) *Layout {
 	l := &Layout{
 		config:     c,
 		components: make([]tea.Model, 0),
@@ -48,13 +26,25 @@ func New(c *Config) *Layout {
 
 	if c.Search != nil {
 		l.components = append(l.components, searchbar.New())
+
+		if c.Search.Results.Table != nil {
+			l.components = append(
+				l.components,
+				table.New(c.Search.Init.Data, c.Search.Results.Table.Columns),
+			)
+		}
 	}
 
 	return l
 }
 
 func (l *Layout) Init() tea.Cmd {
-	return nil
+	cmds := make([]tea.Cmd, len(l.components))
+	for i, c := range l.components {
+		cmds[i] = c.Init()
+	}
+
+	return tea.Batch(cmds...)
 }
 
 func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -66,7 +56,9 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	l.components[0].Update(msg)
+	for _, c := range l.components {
+		c.Update(msg)
+	}
 
 	return l, nil
 }
@@ -74,7 +66,7 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (l *Layout) View() string {
 	var s string
 	for _, comp := range l.components {
-		s = lipgloss.JoinHorizontal(0, s, comp.View())
+		s = lipgloss.JoinVertical(0, s, comp.View())
 	}
 
 	return s

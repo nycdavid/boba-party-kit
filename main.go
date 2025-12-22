@@ -5,6 +5,7 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/nycdavid/boba-party-kit/internal/config"
 	"github.com/nycdavid/boba-party-kit/internal/views/layout"
 	"gopkg.in/yaml.v3"
 )
@@ -15,12 +16,12 @@ func main() {
 		panic(err)
 	}
 
-	config := &layout.Config{}
-	if err := yaml.Unmarshal(b, config); err != nil {
+	cfg := &config.Config{}
+	if err := yaml.Unmarshal(b, cfg); err != nil {
 		panic(err)
 	}
 
-	if config.Search != nil {
+	if cfg.Search != nil {
 		// Search component
 		//hdc := httpdriver.NewClient()
 		//a, err := hdc.Get(
@@ -31,7 +32,7 @@ func main() {
 		//	log.Fatal(err)
 		//}
 
-		l := layout.New(config)
+		l := layout.New(cfg)
 		p := tea.NewProgram(l, tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
 			log.Fatal(err)

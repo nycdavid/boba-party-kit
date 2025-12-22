@@ -1,4 +1,9 @@
 search:
+  results:
+    table:
+      columns:
+        - id
+        - name
   init:
     data:
       http: "https://api.ynab.com/v1/budgets"
