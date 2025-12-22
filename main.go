@@ -22,16 +22,6 @@ func main() {
 	}
 
 	if cfg.Search != nil {
-		// Search component
-		//hdc := httpdriver.NewClient()
-		//a, err := hdc.Get(
-		//	config.Search.Init.Data.HTTP,
-		//	config.Search.Init.Data.Auth.Header.BearerEnvVar,
-		//)
-		//if err != nil {
-		//	log.Fatal(err)
-		//}
-
 		l := layout.New(cfg)
 		p := tea.NewProgram(l, tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {
