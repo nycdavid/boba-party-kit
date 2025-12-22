@@ -12,9 +12,9 @@ A fuzzy-search component.
 
 ```yaml
 search:
-  init:
-  select:
-  results:
+  init: # data to load on start up
+  select: # action to take when a search result is selected
+  results: # how to format search results
     list:
     table:
 
