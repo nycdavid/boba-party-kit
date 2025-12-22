@@ -52,9 +52,13 @@ func (t *Model) Init() tea.Cmd {
 		budgets := data["budgets"].([]any)
 		for _, budget := range budgets {
 			b := budget.(map[string]any)
-			id := b["id"].(string)
-			name := b["name"].(string)
-			rows = append(rows, []string{id, name})
+			rowCells := make([]string, len(t.columns))
+
+			for i, col := range t.columns {
+				rowCells[i] = b[col].(string)
+			}
+
+			rows = append(rows, rowCells)
 		}
 	}
 
