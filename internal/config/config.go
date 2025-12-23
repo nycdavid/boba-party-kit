@@ -2,7 +2,7 @@ package config
 
 type (
 	Config struct {
-		Init
+		Init     Init      `json:"init"`
 		Searches []*Search `yaml:"searches"`
 	}
 
@@ -40,6 +40,7 @@ type (
 	Modal struct{}
 
 	Table struct {
+		Rows    string    `yaml:"rows"`
 		Columns []*Column `yaml:"columns"`
 	}
 

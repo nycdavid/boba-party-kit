@@ -15,6 +15,15 @@ This makes sense when you're searching for one resource, find it and then want t
 In this case, we want to define multiple _named searches_ in our `config.yaml` file under the `search:` key so we can
 reference one search from another in a given search's `select:` directive.
 
+# Interfaces
+
+## Data drivers (`*driver`)
+
+An interface that returns data in `[]byte` format for consumption
+
+- `httpdriver`: returns data from an HTTP request
+- `csvdriver`: returns data from a CSV file
+
 # Components
 
 ## Search
