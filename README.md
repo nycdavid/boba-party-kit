@@ -34,3 +34,7 @@ search:
 ## Tree
 
 A multi-node, nested tree.
+
+## Modal
+
+An overlay/modal component.

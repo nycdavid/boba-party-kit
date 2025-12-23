@@ -32,8 +32,12 @@ type (
 	}
 
 	Select struct {
-		NamedSearch string `yaml:"named_search"`
+		NamedSearch string  `yaml:"named_search"`
+		Search      *Search `yaml:"search"`
+		Modal       *Modal  `yaml:"modal"`
 	}
+
+	Modal struct{}
 
 	Table struct {
 		Columns []*Column `yaml:"columns"`
@@ -51,7 +55,7 @@ type (
 
 	HTTP struct {
 		URL    string `yaml:"url"`
-		Method string `yaml:"method"`
+		Method string `yaml:"method"` // defaults to GET
 		Auth   Auth   `yaml:"auth"`
 	}
 )
