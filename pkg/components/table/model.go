@@ -24,8 +24,9 @@ type (
 
 	Mod func(*Model)
 
-	SetRowsMsg struct {
-		rows [][]string
+	SetTableMsg struct {
+		rows    [][]string
+		columns []string
 	}
 )
 
@@ -37,11 +38,16 @@ func New(d *config.Init, tableCfg *config.Table) *Model {
 	}
 }
 
-func (t *Model) Init() tea.Cmd {
+func (m *Model) Init() tea.Cmd {
 	var rows [][]string
-	if t.data.HTTP.URL != "" {
+	columns := make([]string, len(m.tableCfg.Columns))
+	for i, c := range m.tableCfg.Columns {
+		columns[i] = c.Name
+	}
+
+	if m.data.HTTP.URL != "" {
 		cl := httpdriver.NewClient()
-		res, err := cl.Get(t.data.HTTP.URL, t.data.HTTP.Auth.Header.BearerEnvVar)
+		res, err := cl.Get(m.data.HTTP.URL, m.data.HTTP.Auth.Header.BearerEnvVar)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -51,13 +57,13 @@ func (t *Model) Init() tea.Cmd {
 			log.Fatal(err)
 		}
 
-		colFragments := make([]string, len(t.tableCfg.Columns))
-		for i, col := range t.tableCfg.Columns {
+		colFragments := make([]string, len(m.tableCfg.Columns))
+		for i, col := range m.tableCfg.Columns {
 			colFragments[i] = fmt.Sprintf("%s: %s", col.Name, col.Path)
 		}
 		joinCols := "{" + strings.Join(colFragments, ", ") + "}"
 
-		q, err := gojq.Parse(t.tableCfg.Rows + " | " + joinCols)
+		q, err := gojq.Parse(m.tableCfg.Rows + " | " + joinCols)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -74,8 +80,8 @@ func (t *Model) Init() tea.Cmd {
 		}
 
 		for _, line := range lines {
-			rowCells := make([]string, len(t.tableCfg.Columns))
-			for i, col := range t.tableCfg.Columns {
+			rowCells := make([]string, len(m.tableCfg.Columns))
+			for i, col := range m.tableCfg.Columns {
 				rowCells[i] = line[col.Name].(string)
 			}
 
@@ -84,33 +90,42 @@ func (t *Model) Init() tea.Cmd {
 	}
 
 	return func() tea.Msg {
-		return SetRowsMsg{rows: rows}
+		return SetTableMsg{rows: rows, columns: columns}
 	}
 }
 
-func (t *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		t.view.width = msg.Width
+		w := msg.Width - 10
+		m.view.tbl.SetWidth(w)
+		m.view.resetColumnsWithNewWidth(w)
 	case ui.LoseFocusMsg:
-		t.view.borderColor = ui.InactiveColor
+		m.view.borderColor = ui.InactiveColor
 	case ui.TakeFocusMsg:
-		t.view.borderColor = ui.ActiveColor
-	case SetRowsMsg:
-		t.rows = msg.rows
+		m.view.borderColor = ui.ActiveColor
+	case SetTableMsg:
+		m.view.setColumns(msg.columns)
+		m.view.setRows(msg.rows)
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "k":
+			m.view.tbl.MoveUp(1)
+		case "j":
+			m.view.tbl.MoveDown(1)
+		}
 	}
 
-	return t, nil
+	return m, nil
 }
 
-func (t *Model) View() string {
-	cols := make([]string, len(t.tableCfg.Columns))
-	for i, col := range t.tableCfg.Columns {
-		cols[i] = col.Name
-	}
-
-	return t.view.Render(cols, t.rows)
+func (m *Model) View() string {
+	return m.view.Render()
 }
 
-func (t *Model) fetchData() {
+func (m *Model) SetView(v *View) {
+	m.view = v
+}
+
+func (m *Model) fetchData() {
 }

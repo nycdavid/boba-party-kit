@@ -62,17 +62,20 @@ func (l *Layout) Init() tea.Cmd {
 }
 
 func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	cmp := l.components[l.focus]
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		for _, cmp := range l.components {
 			cmp.Update(msg)
 		}
-	case table.SetRowsMsg:
+	case table.SetTableMsg:
 		for _, cmp := range l.components {
 			cmp.Update(msg)
 		}
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "j":
+			cmp.Update(msg)
 		case "tab":
 			l.focus = (l.focus + 1) % len(l.components)
 			for _, cmp := range l.components {
