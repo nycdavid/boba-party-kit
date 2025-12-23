@@ -12,11 +12,23 @@ import (
 	"github.com/nycdavid/boba-party-kit/pkg/components/ui"
 )
 
+const (
+	LayoutTypeSearch = "search"
+)
+
 type (
 	Layout struct {
 		config     *config.Config
 		components []tea.Model
 		focus      int
+		typ        string
+
+		searchTable searchTable
+	}
+
+	searchTable interface {
+		tea.Model
+		Config() *config.Search
 	}
 
 	Mod func(*Layout)
@@ -29,6 +41,7 @@ func New(c *config.Config) *Layout {
 	}
 
 	if c.Init.NamedSearch != "" {
+		l.typ = LayoutTypeSearch
 		l.components = append(l.components, searchbar.New())
 
 		searchName := c.Init.NamedSearch
@@ -44,7 +57,7 @@ func New(c *config.Config) *Layout {
 		if searchConfig.Results.Table != nil {
 			l.components = append(
 				l.components,
-				table.New(searchConfig.Init, searchConfig.Results.Table),
+				table.New(searchConfig.Init, searchConfig.Results.Table, c, searchName),
 			)
 		}
 	}
@@ -73,8 +86,15 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmp.Update(msg)
 		}
 	case table.SelectRowMsg:
+		// we know it was the search component
+		cfg := l.searchTable.Config()
+		searchName := cfg.Name
+		i := slices.IndexFunc(l.config.Searches, func(s *config.Search) bool { return s.Name == searchName })
+		s := l.config.Searches[i]
+		// nextSearch is the search to execute when a row is selected
+		nextSearch := s.Select.NamedSearch
 		row := msg.Row
-		l.config.Searches
+		return l, l.executeSearch(row, nextSearch)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
@@ -106,4 +126,10 @@ func (l *Layout) View() string {
 	}
 
 	return s
+}
+
+func (l *Layout) executeSearch(row []string, namedSearch string) tea.Cmd {
+	return func() tea.Msg {
+		return nil
+	}
 }

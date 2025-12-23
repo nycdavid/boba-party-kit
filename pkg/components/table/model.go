@@ -19,7 +19,9 @@ type (
 
 		searchCfg *config.Search
 		tableCfg  *config.Table
+		cfg       *config.Config
 		view      *View
+		name      string
 	}
 
 	Mod func(*Model)
@@ -34,12 +36,12 @@ type (
 	}
 )
 
-func New(d *config.Init, tableCfg *config.Table, searchConfig *config.Search) *Model {
+func New(d *config.Init, tableCfg *config.Table, cfg *config.Config, name string) *Model {
 	return &Model{
-		data:      d,
-		tableCfg:  tableCfg,
-		searchCfg: searchConfig,
-		view:      NewView(),
+		data:     d,
+		tableCfg: tableCfg,
+		cfg:      cfg,
+		view:     NewView(),
 	}
 }
 
