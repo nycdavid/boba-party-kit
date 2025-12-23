@@ -11,6 +11,7 @@ type (
 		baseStyle   lipgloss.Style
 		borderColor lipgloss.Color
 		style       btable.Styles
+		width       int
 	}
 )
 
@@ -32,8 +33,8 @@ func NewView() *View {
 	return &View{style: s, baseStyle: baseStyle, borderColor: ui.InactiveColor}
 }
 
-func (t *View) Render(headers []string, rows [][]string) string {
-	columns := headersToColumns(headers)
+func (v *View) Render(headers []string, rows [][]string) string {
+	columns := v.headersToColumns(headers)
 	tableRows := rowsToTableRows(rows)
 
 	tbl := btable.New(
@@ -42,15 +43,15 @@ func (t *View) Render(headers []string, rows [][]string) string {
 		btable.WithFocused(true),
 		btable.WithHeight(40),
 	)
-	tbl.SetStyles(t.style)
+	tbl.SetStyles(v.style)
 
-	return t.baseStyle.BorderForeground(t.borderColor).Render(tbl.View() + "\n")
+	return v.baseStyle.BorderForeground(v.borderColor).Render(tbl.View() + "\n")
 }
 
-func headersToColumns(headers []string) []btable.Column {
+func (v *View) headersToColumns(headers []string) []btable.Column {
 	columns := make([]btable.Column, len(headers))
 	for i, header := range headers {
-		columns[i] = btable.Column{Title: header, Width: 20}
+		columns[i] = btable.Column{Title: header, Width: (v.width - 10) / len(headers)}
 	}
 
 	return columns

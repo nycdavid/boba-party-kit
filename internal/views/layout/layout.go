@@ -63,6 +63,10 @@ func (l *Layout) Init() tea.Cmd {
 
 func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		for _, cmp := range l.components {
+			cmp.Update(msg)
+		}
 	case table.SetRowsMsg:
 		for _, cmp := range l.components {
 			cmp.Update(msg)

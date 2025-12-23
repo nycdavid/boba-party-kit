@@ -90,6 +90,8 @@ func (t *Model) Init() tea.Cmd {
 
 func (t *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		t.view.width = msg.Width
 	case ui.LoseFocusMsg:
 		t.view.borderColor = ui.InactiveColor
 	case ui.TakeFocusMsg:
