@@ -109,6 +109,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.view.setRows(msg.rows)
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "enter":
 		case "k":
 			m.view.tbl.MoveUp(1)
 		case "j":

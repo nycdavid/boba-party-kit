@@ -74,6 +74,8 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "enter":
+			cmp.Update(msg)
 		case "j":
 			cmp.Update(msg)
 		case "tab":
