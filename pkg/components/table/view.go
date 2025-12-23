@@ -3,19 +3,20 @@ package table
 import (
 	btable "github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/nycdavid/boba-party-kit/pkg/components/ui"
 )
 
 type (
 	View struct {
-		baseStyle lipgloss.Style
-		style     btable.Styles
+		baseStyle   lipgloss.Style
+		borderColor lipgloss.Color
+		style       btable.Styles
 	}
 )
 
 func NewView() *View {
 	baseStyle := lipgloss.NewStyle().
-		BorderStyle(lipgloss.NormalBorder()).
-		BorderForeground(lipgloss.Color("240"))
+		BorderStyle(lipgloss.NormalBorder())
 
 	s := btable.DefaultStyles()
 	s.Header = s.Header.
@@ -28,7 +29,7 @@ func NewView() *View {
 		Background(lipgloss.Color("57")).
 		Bold(false)
 
-	return &View{style: s, baseStyle: baseStyle}
+	return &View{style: s, baseStyle: baseStyle, borderColor: ui.InactiveColor}
 }
 
 func (t *View) Render(headers []string, rows [][]string) string {
@@ -43,7 +44,7 @@ func (t *View) Render(headers []string, rows [][]string) string {
 	)
 	tbl.SetStyles(t.style)
 
-	return t.baseStyle.Render(tbl.View() + "\n")
+	return t.baseStyle.BorderForeground(t.borderColor).Render(tbl.View() + "\n")
 }
 
 func headersToColumns(headers []string) []btable.Column {

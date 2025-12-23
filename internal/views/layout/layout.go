@@ -9,6 +9,7 @@ import (
 	"github.com/nycdavid/boba-party-kit/internal/config"
 	"github.com/nycdavid/boba-party-kit/pkg/components/searchbar"
 	"github.com/nycdavid/boba-party-kit/pkg/components/table"
+	"github.com/nycdavid/boba-party-kit/pkg/components/ui"
 )
 
 type (
@@ -62,15 +63,25 @@ func (l *Layout) Init() tea.Cmd {
 
 func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case table.SetRowsMsg:
+		for _, cmp := range l.components {
+			cmp.Update(msg)
+		}
 	case tea.KeyMsg:
 		switch msg.String() {
+		case "tab":
+			l.focus = (l.focus + 1) % len(l.components)
+			for _, cmp := range l.components {
+				cmp.Update(ui.LoseFocusMsg{})
+			}
+			cmp := l.components[l.focus]
+			cmp.Update(ui.TakeFocusMsg{})
 		case "ctrl+c", "q":
 			return l, tea.Quit
+		default:
+			cmp := l.components[l.focus]
+			cmp.Update(msg)
 		}
-	}
-
-	for _, c := range l.components {
-		c.Update(msg)
 	}
 
 	return l, nil

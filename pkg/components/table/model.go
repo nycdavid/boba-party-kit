@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/itchyny/gojq"
 	"github.com/nycdavid/boba-party-kit/internal/config"
+	"github.com/nycdavid/boba-party-kit/pkg/components/ui"
 	"github.com/nycdavid/boba-party-kit/pkg/httpdriver"
 )
 
@@ -32,6 +33,7 @@ func New(d *config.Init, tableCfg *config.Table) *Model {
 	return &Model{
 		data:     d,
 		tableCfg: tableCfg,
+		view:     NewView(),
 	}
 }
 
@@ -88,6 +90,10 @@ func (t *Model) Init() tea.Cmd {
 
 func (t *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
+	case ui.LoseFocusMsg:
+		t.view.borderColor = ui.InactiveColor
+	case ui.TakeFocusMsg:
+		t.view.borderColor = ui.ActiveColor
 	case SetRowsMsg:
 		t.rows = msg.rows
 	}
@@ -96,17 +102,12 @@ func (t *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (t *Model) View() string {
-	v := NewView()
-
 	cols := make([]string, len(t.tableCfg.Columns))
 	for i, col := range t.tableCfg.Columns {
 		cols[i] = col.Name
 	}
 
-	return v.Render(
-		cols,
-		t.rows,
-	)
+	return t.view.Render(cols, t.rows)
 }
 
 func (t *Model) fetchData() {
