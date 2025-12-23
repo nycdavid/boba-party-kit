@@ -1,46 +1,53 @@
-search:
-  transactions:
+init:
+  named_search: budgets
+searches:
+  - name: transactions
     init:
-      http: "https://api.ynab.com/v1/budgets/:budget_id/transactions"
-      auth:
-        header:
-          bearer-env-var: "YNAB_API_TOKEN"
+      http:
+        url: "https://api.ynab.com/v1/budgets/:budget_id/transactions"
+        auth:
+          header:
+            bearer-env-var: "YNAB_API_TOKEN"
     results:
       table:
         columns:
           - name: "Date"
-            path: ".transactions[].date"
+            path: ".data.transactions[].date"
           - name: "Payee name"
-            path: ".transactions[].payee_name"
+            path: ".data.transactions[].payee_name"
           - name: "Amount"
-            path: ".transactions[].amount"
-  categories:
+            path: ".data.transactions[].amount"
+  - name: categories
     init:
-      http: "https://api.ynab.com/v1/budgets/:budget_id/categories"
-      auth:
-        header:
-          bearer-env-var: "YNAB_API_TOKEN"
+      http:
+        url: "https://api.ynab.com/v1/budgets/:budget_id/categories"
+        auth:
+          header:
+            bearer-env-var: "YNAB_API_TOKEN"
     results:
       table:
         columns:
           - name: "Category group"
-            path: ".categories[].category_group_name"
+            path: ".data.categories[].category_group_name"
           - name: "Category"
-            path: ".categories[].name"
+            path: ".data.categories[].name"
     select:
-      named_search:
-        name: transactions
-  budgets:
+      named_search: transactions
+  - name: budgets
     init:
-      http: "https://api.ynab.com/v1/budgets"
-      auth:
-        header:
-          bearer-env-var: "YNAB_API_TOKEN"
+      http:
+        url: "https://api.ynab.com/v1/budgets"
+        method: "GET"
+        auth:
+          header:
+            bearer-env-var: "YNAB_API_TOKEN"
     results:
       table:
         columns:
-          - id
-          - name
+          - name: id
+            path: ".data.budgets[].id"
+          - name: name
+            path: ".data.budgets[].name"
     select:
       named_search: categories
       http:
@@ -49,15 +56,3 @@ search:
         auth:
           header:
             bearer-env-var: "YNAB_API_TOKEN"
-  results:
-    table:
-      columns:
-        - id
-        - name
-  init:
-    data:
-      http: "https://api.ynab.com/v1/budgets"
-      auth:
-        header:
-          # the value of bearer: is read from the environment
-          bearer-env-var: "YNAB_API_TOKEN"

@@ -21,7 +21,7 @@ func main() {
 		panic(err)
 	}
 
-	if cfg.Search != nil {
+	if cfg.Searches != nil {
 		l := layout.New(cfg)
 		p := tea.NewProgram(l, tea.WithAltScreen())
 		if _, err := p.Run(); err != nil {

@@ -1,6 +1,11 @@
 package config
 
 type (
+	Config struct {
+		Init
+		Searches []*Search `yaml:"searches"`
+	}
+
 	Header struct {
 		BearerEnvVar string `yaml:"bearer-env-var"`
 	}
@@ -15,23 +20,38 @@ type (
 	}
 
 	Search struct {
+		Name string `yaml:"name"`
+
 		Init    *Init    `yaml:"init"`
 		Results *Results `yaml:"results"`
+		Select  *Select  `yaml:"select"`
 	}
 
 	Results struct {
 		Table *Table `yaml:"table"`
 	}
 
+	Select struct {
+		NamedSearch string `yaml:"named_search"`
+	}
+
 	Table struct {
-		Columns []string `yaml:"columns"`
+		Columns []*Column `yaml:"columns"`
+	}
+
+	Column struct {
+		Name string `yaml:"name"`
+		Path string `yaml:"path"`
 	}
 
 	Init struct {
-		Data *Data `yaml:"data"`
+		NamedSearch string `yaml:"named_search"`
+		HTTP        HTTP   `yaml:"http"`
 	}
 
-	Config struct {
-		Search *Search `yaml:"search"`
+	HTTP struct {
+		URL    string `yaml:"url"`
+		Method string `yaml:"method"`
+		Auth   Auth   `yaml:"auth"`
 	}
 )

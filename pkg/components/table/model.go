@@ -13,10 +13,10 @@ type (
 	JSONData map[string]any
 
 	Model struct {
-		data *config.Data
+		data *config.Init
 		rows [][]string
 
-		columns []string
+		columns []*config.Column
 		view    *View
 	}
 
@@ -27,7 +27,7 @@ type (
 	}
 )
 
-func New(d *config.Data, columns []string) *Model {
+func New(d *config.Init, columns []*config.Column) *Model {
 	return &Model{
 		data:    d,
 		columns: columns,
@@ -36,10 +36,10 @@ func New(d *config.Data, columns []string) *Model {
 
 func (t *Model) Init() tea.Cmd {
 	var rows [][]string
-	if t.data.HTTP != "" {
+	if t.data.HTTP.URL != "" {
 		var jd JSONData
 		cl := httpdriver.NewClient()
-		res, err := cl.Get(t.data.HTTP, t.data.Auth.Header.BearerEnvVar)
+		res, err := cl.Get(t.data.HTTP.URL, t.data.HTTP.Auth.Header.BearerEnvVar)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -55,7 +55,7 @@ func (t *Model) Init() tea.Cmd {
 			rowCells := make([]string, len(t.columns))
 
 			for i, col := range t.columns {
-				rowCells[i] = b[col].(string)
+				rowCells[i] = b[col.Name].(string)
 			}
 
 			rows = append(rows, rowCells)
@@ -79,8 +79,13 @@ func (t *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (t *Model) View() string {
 	v := NewView()
 
+	cols := make([]string, len(t.columns))
+	for i, col := range t.columns {
+		cols[i] = col.Name
+	}
+
 	return v.Render(
-		t.columns,
+		cols,
 		t.rows,
 	)
 }
