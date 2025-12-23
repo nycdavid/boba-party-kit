@@ -72,6 +72,9 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		for _, cmp := range l.components {
 			cmp.Update(msg)
 		}
+	case table.SelectRowMsg:
+		row := msg.Row
+		l.config.Searches
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":

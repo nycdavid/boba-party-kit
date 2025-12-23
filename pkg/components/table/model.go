@@ -16,10 +16,10 @@ import (
 type (
 	Model struct {
 		data *config.Init
-		rows [][]string
 
-		tableCfg *config.Table
-		view     *View
+		searchCfg *config.Search
+		tableCfg  *config.Table
+		view      *View
 	}
 
 	Mod func(*Model)
@@ -28,13 +28,18 @@ type (
 		rows    [][]string
 		columns []string
 	}
+
+	SelectRowMsg struct {
+		Row []string
+	}
 )
 
-func New(d *config.Init, tableCfg *config.Table) *Model {
+func New(d *config.Init, tableCfg *config.Table, searchConfig *config.Search) *Model {
 	return &Model{
-		data:     d,
-		tableCfg: tableCfg,
-		view:     NewView(),
+		data:      d,
+		tableCfg:  tableCfg,
+		searchCfg: searchConfig,
+		view:      NewView(),
 	}
 }
 
@@ -110,6 +115,9 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
+			i := m.view.tbl.Cursor()
+			row := m.view.tbl.Rows()[i]
+			return m, m.selectRow(row)
 		case "k":
 			m.view.tbl.MoveUp(1)
 		case "j":
@@ -128,5 +136,12 @@ func (m *Model) SetView(v *View) {
 	m.view = v
 }
 
-func (m *Model) fetchData() {
+func (m *Model) selectRow(row []string) tea.Cmd {
+	return func() tea.Msg {
+		return SelectRowMsg{Row: row}
+	}
+}
+
+func (m *Model) Config() *config.Search {
+	return m.searchCfg
 }
