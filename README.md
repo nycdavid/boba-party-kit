@@ -23,8 +23,8 @@ Various drivers for fetching data. All structs in this package implement the fol
 
 ```go
 type (
-	driver interface {
-		Fetch() ([]byte, error)
+  driver interface {
+    Fetch() ([]byte, error)
   }
 )
 ```
