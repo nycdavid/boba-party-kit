@@ -23,7 +23,7 @@ Various drivers for fetching data. All structs in this package implement the fol
 
 ```go
 type (
-  driver interface {
+  datadriver interface {
     Fetch() ([]byte, error)
   }
 )
@@ -34,7 +34,7 @@ type (
 
 ## `package formatdriver`
 
-Various drivers for parsing and formatting structured `[]byte` data
+Various drivers for parsing and formatting structured `[]byte` data. All structs implement the following interface:
 
 - `datadriver.TableJSON`: formats `[]byte` data into rows and columns, returns `([][]string, []string, error)`
 
