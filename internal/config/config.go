@@ -74,10 +74,4 @@ type (
 	File struct {
 		Path string `yaml:"path"`
 	}
-
-	HTTP struct {
-		URL    string `yaml:"url"`
-		Method string `yaml:"method"` // defaults to GET
-		Auth   *Auth  `yaml:"auth"`
-	}
 )

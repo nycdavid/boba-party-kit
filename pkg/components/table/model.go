@@ -33,7 +33,7 @@ type (
 		Row []string
 	}
 
-	dataDriver interface {
+	DataDriver interface {
 		Fetch() ([]byte, error)
 	}
 
@@ -53,7 +53,16 @@ func New(d *config.SearchInit, tableCfg *config.Table, cfg *config.Config, searc
 }
 
 func (m *Model) Init() tea.Cmd {
-	return m.SetTable(m.searchCfg)
+	var drv DataDriver
+	if m.searchCfg.Init.HTTP != nil {
+		h := m.searchCfg.Init.HTTP
+		drv = datadriver.NewHTTP(h.URL, h.Auth.Header.BearerEnvVar, h.Method)
+	} else if m.searchCfg.Init.File != nil {
+		f := m.searchCfg.Init.File
+		drv = datadriver.NewFile(*f)
+	}
+
+	return SetTable(m.searchCfg, drv)
 }
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -99,16 +108,7 @@ func (m *Model) selectRow(row []string) tea.Cmd {
 	}
 }
 
-func (m *Model) SetTable(cfg config.Search) tea.Cmd {
-	var drv dataDriver
-	if cfg.Init.HTTP != nil {
-		h := cfg.Init.HTTP
-		drv = datadriver.NewHTTP(h.URL, h.Auth.Header.BearerEnvVar, h.Method)
-	} else if cfg.Init.File != nil {
-		f := cfg.Init.File
-		drv = datadriver.NewFile(*f)
-	}
-
+func SetTable(cfg config.Search, drv DataDriver) tea.Cmd {
 	data, err := drv.Fetch()
 	if err != nil {
 		log.Fatal(err)

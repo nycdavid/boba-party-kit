@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/nycdavid/boba-party-kit/internal/config"
+	"github.com/nycdavid/boba-party-kit/internal/datadriver"
 	"github.com/nycdavid/boba-party-kit/pkg/components/searchbar"
 	"github.com/nycdavid/boba-party-kit/pkg/components/table"
 	"github.com/nycdavid/boba-party-kit/pkg/components/ui"
@@ -77,11 +78,7 @@ func (l *Layout) Init() tea.Cmd {
 func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	cmp := l.components[l.focus]
 	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		for _, cmp := range l.components {
-			cmp.Update(msg)
-		}
-	case table.SetTableMsg:
+	case tea.WindowSizeMsg, table.SetTableMsg:
 		for _, cmp := range l.components {
 			cmp.Update(msg)
 		}
@@ -134,7 +131,15 @@ func (l *Layout) executeSearch(row []string, namedSearch string) tea.Cmd {
 		log.Fatalf("invalid named search: %s", namedSearch)
 	}
 
-	return func() tea.Msg {
-		return nil
+	childSearchCfg := l.config.Searches[i]
+	var drv table.DataDriver
+	if childSearchCfg.Init.HTTP != nil {
+		h := childSearchCfg.Init.HTTP
+		drv = datadriver.NewHTTP(h.FormattedURL([]any{row[0]}), h.Auth.Header.BearerEnvVar, h.Method)
+	} else if childSearchCfg.Init.File != nil {
+		f := childSearchCfg.Init.File
+		drv = datadriver.NewFile(*f)
 	}
+
+	return table.SetTable(childSearchCfg, drv)
 }

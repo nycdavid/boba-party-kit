@@ -22,7 +22,7 @@ searches:
   - name: categories
     init:
       http:
-        url: "https://api.ynab.com/v1/budgets/:budget_id/categories"
+        url: "https://api.ynab.com/v1/budgets/%s/categories"
         auth:
           header:
             bearer-env-var: "YNAB_API_TOKEN"
