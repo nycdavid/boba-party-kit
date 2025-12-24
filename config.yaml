@@ -27,13 +27,14 @@ searches:
           header:
             bearer-env-var: "YNAB_API_TOKEN"
     results:
-      rows: ".data.categories[]"
       table:
-        columns:
-          - name: "Category group"
-            path: ".category_group_name"
-          - name: "Category"
-            path: ".name"
+        json:
+          rows: ".data.categories[]"
+          columns:
+            - name: "Category group"
+              path: ".category_group_name"
+            - name: "Category"
+              path: ".name"
     select:
       named_search: transactions
   - name: budgets
@@ -45,12 +46,13 @@ searches:
             bearer-env-var: "YNAB_API_TOKEN"
     results:
       table:
-        rows: ".data.budgets[]"
-        columns:
-          - name: id
-            path: ".id"
-          - name: name
-            path: ".name"
+        json:
+          rows: ".data.budgets[]"
+          columns:
+            - name: id
+              path: ".id"
+            - name: name
+              path: ".name"
     select:
       named_search: categories
       http:

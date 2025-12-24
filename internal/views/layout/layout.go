@@ -57,7 +57,7 @@ func New(c *config.Config) *Layout {
 		if searchConfig.Results.Table != nil {
 			l.components = append(
 				l.components,
-				table.New(searchConfig.Init, searchConfig.Results.Table, c, searchName),
+				table.New(searchConfig.Init, searchConfig.Results.Table, c, searchConfig),
 			)
 		}
 	}
