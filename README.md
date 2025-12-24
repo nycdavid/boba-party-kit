@@ -17,12 +17,26 @@ reference one search from another in a given search's `select:` directive.
 
 # Interfaces
 
-## Data drivers (`*driver`)
+## `package datadriver`
 
-An interface that returns data in `[]byte` format for consumption
+Various drivers for fetching data. All structs in this package implement the following interface:
 
-- `httpdriver`: returns data from an HTTP request
-- `csvdriver`: returns data from a CSV file
+```go
+type (
+	driver interface {
+		Fetch() ([]byte, error)
+  }
+)
+```
+
+- `datadriver.HTTP`: makes an HTTP request and returns its response body as `[]byte`
+- `datadriver.File`: reads a file on disk and returns its response body as `[]byte`
+
+## `package formatdriver`
+
+Various drivers for parsing and formatting structured `[]byte` data
+
+- `datadriver.TableJSON`: formats `[]byte` data into rows and columns, returns `([][]string, []string, error)`
 
 # Components
 
