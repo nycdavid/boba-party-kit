@@ -1,9 +1,16 @@
 package config
 
 type (
+	// Config is the base config.yaml file
 	Config struct {
-		Init     Init      `json:"init"`
-		Searches []*Search `yaml:"searches"`
+		Init     *Init    `yaml:"init"`
+		Searches []Search `yaml:"searches"`
+	}
+
+	Init struct {
+		HTTP        *HTTP  `yaml:"http"`
+		File        *File  `yaml:"file"`
+		NamedSearch string `yaml:"named_search"`
 	}
 
 	Header struct {
@@ -14,21 +21,20 @@ type (
 		Header *Header `yaml:"header"`
 	}
 
-	Data struct {
-		HTTP string `yaml:"http"`
-		Auth *Auth  `yaml:"auth"`
-	}
-
 	Search struct {
 		Name string `yaml:"name"`
 
-		Init    *Init    `yaml:"init"`
-		Results *Results `yaml:"results"`
-		Select  *Select  `yaml:"select"`
+		Init    *SearchInit `yaml:"init"`
+		Results *Results    `yaml:"results"`
+		Select  *Select     `yaml:"select"`
 	}
 
 	Results struct {
 		Table *Table `yaml:"table"`
+		List  *List  `yaml:"list"`
+	}
+
+	List struct {
 	}
 
 	Select struct {
@@ -40,8 +46,18 @@ type (
 	Modal struct{}
 
 	Table struct {
-		Rows    string    `yaml:"rows"`
-		Columns []*Column `yaml:"columns"`
+		JSON    *JSON    `yaml:"json"`
+		CSV     *CSV     `yaml:"csv"`
+		Rows    string   `yaml:"rows"`
+		Columns []Column `yaml:"columns"`
+	}
+
+	JSON struct {
+		Rows    string   `yaml:"rows"`
+		Columns []Column `yaml:"columns"`
+	}
+
+	CSV struct {
 	}
 
 	Column struct {
@@ -49,14 +65,19 @@ type (
 		Path string `yaml:"path"`
 	}
 
-	Init struct {
-		NamedSearch string `yaml:"named_search"`
-		HTTP        HTTP   `yaml:"http"`
+	SearchInit struct {
+		// SearchInit always needs one type of driver
+		HTTP *HTTP `yaml:"http"`
+		File *File `yaml:"file"`
+	}
+
+	File struct {
+		Path string `yaml:"path"`
 	}
 
 	HTTP struct {
 		URL    string `yaml:"url"`
 		Method string `yaml:"method"` // defaults to GET
-		Auth   Auth   `yaml:"auth"`
+		Auth   *Auth  `yaml:"auth"`
 	}
 )

@@ -10,14 +10,15 @@ searches:
             bearer-env-var: "YNAB_API_TOKEN"
     results:
       table:
-        rows: ".data.transactions[]"
-        columns:
-          - name: "Date"
-            path: ".date"
-          - name: "Payee name"
-            path: ".payee_name"
-          - name: "Amount"
-            path: ".amount"
+        json:
+          rows: ".data.transactions[]"
+          columns:
+            - name: "Date"
+              path: ".date"
+            - name: "Payee name"
+              path: ".payee_name"
+            - name: "Amount"
+              path: ".amount"
   - name: categories
     init:
       http:

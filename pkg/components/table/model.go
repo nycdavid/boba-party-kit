@@ -4,24 +4,27 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/itchyny/gojq"
 	"github.com/nycdavid/boba-party-kit/internal/config"
+	"github.com/nycdavid/boba-party-kit/internal/datadriver"
+	"github.com/nycdavid/boba-party-kit/internal/formatdriver"
 	"github.com/nycdavid/boba-party-kit/pkg/components/ui"
-	"github.com/nycdavid/boba-party-kit/pkg/httpdriver"
 )
 
 type (
 	Model struct {
-		data *config.Init
+		data *config.SearchInit
 
 		searchCfg *config.Search
 		tableCfg  *config.Table
-		cfg       *config.Config
-		view      *View
-		name      string
+
+		cfg  *config.Config
+		view *View
+		name string
 	}
 
 	Mod func(*Model)
@@ -34,9 +37,17 @@ type (
 	SelectRowMsg struct {
 		Row []string
 	}
+
+	dataDriver interface {
+		Fetch() ([]byte, error)
+	}
+
+	formatDriver interface {
+		Format(data []byte) ([][]string, []string, error)
+	}
 )
 
-func New(d *config.Init, tableCfg *config.Table, cfg *config.Config, name string) *Model {
+func New(d *config.SearchInit, tableCfg *config.Table, cfg *config.Config, name string) *Model {
 	return &Model{
 		data:     d,
 		tableCfg: tableCfg,
@@ -53,8 +64,12 @@ func (m *Model) Init() tea.Cmd {
 	}
 
 	if m.data.HTTP.URL != "" {
-		cl := httpdriver.NewClient()
-		res, err := cl.Get(m.data.HTTP.URL, m.data.HTTP.Auth.Header.BearerEnvVar)
+		cl := datadriver.NewHTTP(
+			m.data.HTTP.URL,
+			m.data.HTTP.Auth.Header.BearerEnvVar,
+			http.MethodGet,
+		)
+		res, err := cl.Fetch()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -141,6 +156,43 @@ func (m *Model) SetView(v *View) {
 func (m *Model) selectRow(row []string) tea.Cmd {
 	return func() tea.Msg {
 		return SelectRowMsg{Row: row}
+	}
+}
+
+func (m *Model) SetTable() tea.Cmd {
+	// fetch data
+	// rows, columns
+	cfg := m.searchCfg
+
+	var drv dataDriver
+	if cfg.Init.HTTP != nil {
+		h := cfg.Init.HTTP
+		drv = datadriver.NewHTTP(h.URL, h.Auth.Header.BearerEnvVar, h.Method)
+	} else if cfg.Init.File != nil {
+		f := cfg.Init.File
+		drv = datadriver.NewFile(*f)
+	}
+
+	data, err := drv.Fetch()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var tblFormatter formatDriver
+	if cfg.Results.Table.JSON != nil {
+		tc := cfg.Results.Table.JSON
+		tblFormatter = formatdriver.NewTableJSON(tc.Rows, tc.Columns)
+	} else {
+		log.Fatal("no table formatdriver selected")
+	}
+
+	rows, columns, err := tblFormatter.Format(data)
+	if err != nil {
+		log.Fatalf("failed to format table: %v", err)
+	}
+
+	return func() tea.Msg {
+		return SetTableMsg{rows: rows, columns: columns}
 	}
 }
 

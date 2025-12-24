@@ -45,7 +45,7 @@ func New(c *config.Config) *Layout {
 		l.components = append(l.components, searchbar.New())
 
 		searchName := c.Init.NamedSearch
-		i := slices.IndexFunc(c.Searches, func(s *config.Search) bool {
+		i := slices.IndexFunc(c.Searches, func(s config.Search) bool {
 			return s.Name == searchName
 		})
 		if i == -1 {
@@ -89,7 +89,7 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// we know it was the search component
 		cfg := l.searchTable.Config()
 		searchName := cfg.Name
-		i := slices.IndexFunc(l.config.Searches, func(s *config.Search) bool { return s.Name == searchName })
+		i := slices.IndexFunc(l.config.Searches, func(s config.Search) bool { return s.Name == searchName })
 		s := l.config.Searches[i]
 		// nextSearch is the search to execute when a row is selected
 		nextSearch := s.Select.NamedSearch
@@ -129,6 +129,11 @@ func (l *Layout) View() string {
 }
 
 func (l *Layout) executeSearch(row []string, namedSearch string) tea.Cmd {
+	i := slices.IndexFunc(l.config.Searches, func(s config.Search) bool { return s.Name == namedSearch })
+	if i == -1 {
+		log.Fatalf("invalid named search: %s", namedSearch)
+	}
+
 	return func() tea.Msg {
 		return nil
 	}
