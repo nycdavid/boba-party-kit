@@ -30,13 +30,14 @@ type (
 ```
 
 - `datadriver.HTTP`: makes an HTTP request and returns its response body as `[]byte`
-- `datadriver.File`: reads a file on disk and returns its response body as `[]byte`
+- `datadriver.File`: reads a file on disk and returns its contents as `[]byte`
 
 ## `package formatdriver`
 
-Various drivers for parsing and formatting structured `[]byte` data. All structs implement the following interface:
+Various drivers for parsing and formatting structured data. All structs implement the following interface:
 
 - `datadriver.TableJSON`: formats `[]byte` data into rows and columns, returns `([][]string, []string, error)`
+- `datadriver.TableCSV`: formats `[]byte` data in rows and columns, returns `([][]string, []string, error)`
 
 # Components
 
