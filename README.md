@@ -39,6 +39,16 @@ Various drivers for parsing and formatting structured data.
 - `datadriver.TableJSON`: formats `[]byte` data into rows and columns, returns `([][]string, []string, error)`
 - `datadriver.TableCSV`: formats `[]byte` data in rows and columns, returns `([][]string, []string, error)`
 
+Implements the following interface:
+
+```go
+type ( 
+  datadriver interface {
+    Format() ([][]string, []string, error)
+  }
+)
+```
+
 # Components
 
 ## Search
