@@ -29,11 +29,11 @@ searches:
     results:
       table:
         json:
-          rows: ".data.categories[]"
+          rows: ".data.category_groups[]"
           columns:
-            - name: "Category group"
-              path: ".category_group_name"
-            - name: "Category"
+            - name: "ID"
+              path: ".id"
+            - name: "cgroup"
               path: ".name"
     select:
       named_search: transactions

@@ -29,7 +29,7 @@ type (
 
 	searchTable interface {
 		tea.Model
-		Config() *config.Search
+		Config() config.Search
 	}
 
 	Mod func(*Layout)
@@ -56,9 +56,11 @@ func New(c *config.Config) *Layout {
 		searchConfig := c.Searches[i]
 
 		if searchConfig.Results.Table != nil {
+			t := table.New(searchConfig.Init, searchConfig.Results.Table, c, searchConfig)
+			l.searchTable = t
 			l.components = append(
 				l.components,
-				table.New(searchConfig.Init, searchConfig.Results.Table, c, searchConfig),
+				t,
 			)
 		}
 	}
@@ -95,21 +97,25 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
-			cmp.Update(msg)
+			_, c := cmp.Update(msg)
+			return l, c
 		case "j":
-			cmp.Update(msg)
+			_, c := cmp.Update(msg)
+			return l, c
 		case "tab":
 			l.focus = (l.focus + 1) % len(l.components)
 			for _, cmp := range l.components {
 				cmp.Update(ui.LoseFocusMsg{})
 			}
 			cmp := l.components[l.focus]
-			cmp.Update(ui.TakeFocusMsg{})
+			_, c := cmp.Update(ui.TakeFocusMsg{})
+			return l, c
 		case "ctrl+c", "q":
 			return l, tea.Quit
 		default:
 			cmp := l.components[l.focus]
-			cmp.Update(msg)
+			_, c := cmp.Update(msg)
+			return l, c
 		}
 	}
 
