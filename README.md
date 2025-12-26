@@ -15,7 +15,7 @@ This makes sense when you're searching for one resource, find it and then want t
 In this case, we want to define multiple _named searches_ in our `config.yaml` file under the `search:` key so we can
 reference one search from another in a given search's `select:` directive.
 
-# Interfaces
+# Concepts
 
 ## `package datadriver`
 
@@ -34,7 +34,7 @@ type (
 
 ## `package formatdriver`
 
-Various drivers for parsing and formatting structured data. All structs implement the following interface:
+Various drivers for parsing and formatting structured data. 
 
 - `datadriver.TableJSON`: formats `[]byte` data into rows and columns, returns `([][]string, []string, error)`
 - `datadriver.TableCSV`: formats `[]byte` data in rows and columns, returns `([][]string, []string, error)`
