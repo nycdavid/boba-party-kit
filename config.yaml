@@ -23,6 +23,8 @@ searches:
               path: ".payee_name"
             - name: "Amount"
               path: ".amount"
+            - name: "Memo"
+              path: ".memo"
   - name: categories
     init:
       arguments:
