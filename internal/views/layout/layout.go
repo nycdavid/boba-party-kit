@@ -87,15 +87,8 @@ func (l *Layout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmp.Update(msg)
 		}
 	case table.SelectRowMsg:
-		// we know it was the search component
-		cfg := l.searchTable.Config()
-		searchName := cfg.Name
-		i := slices.IndexFunc(l.config.Searches, func(s config.Search) bool { return s.Name == searchName })
-		s := l.config.Searches[i]
-		// nextSearch is the search to execute when a row is selected
-		nextSearch := s.Select.NamedSearch
 		row := msg.Row
-		return l, l.executeSearch(row, nextSearch)
+		return l, l.executeSearch(row)
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
@@ -133,21 +126,25 @@ func (l *Layout) View() string {
 	return s
 }
 
-func (l *Layout) executeSearch(row []string, namedSearch string) tea.Cmd {
-	i := slices.IndexFunc(l.config.Searches, func(s config.Search) bool { return s.Name == namedSearch })
+func (l *Layout) executeSearch(row []string) tea.Cmd {
+	currentSearchCfg := l.searchTable.Config()
+	nextSearchName := currentSearchCfg.Select.NamedSearch
+
+	i := slices.IndexFunc(l.config.Searches, func(s config.Search) bool { return s.Name == nextSearchName })
 	if i == -1 {
-		log.Fatalf("invalid named search: %s", namedSearch)
+		log.Fatalf("invalid named search: %s", nextSearchName)
 	}
 
-	childSearchCfg := l.config.Searches[i]
+	nextSearchCfg := l.config.Searches[i]
+
 	var drv table.DataDriver
-	if childSearchCfg.Init.HTTP != nil {
-		h := childSearchCfg.Init.HTTP
+	if nextSearchCfg.Init.HTTP != nil {
+		h := nextSearchCfg.Init.HTTP
 		drv = datadriver.NewHTTP(h.FormattedURL([]any{row[0]}), h.Auth.Header.BearerEnvVar, h.Method)
-	} else if childSearchCfg.Init.File != nil {
-		f := childSearchCfg.Init.File
+	} else if nextSearchCfg.Init.File != nil {
+		f := nextSearchCfg.Init.File
 		drv = datadriver.NewFile(*f)
 	}
 
-	return table.SetTable(childSearchCfg, drv)
+	return table.SetTable(nextSearchCfg, drv)
 }
