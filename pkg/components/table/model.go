@@ -25,8 +25,9 @@ type (
 	Mod func(*Model)
 
 	SetTableMsg struct {
-		rows    [][]string
-		columns []string
+		rows      [][]string
+		columns   []string
+		searchCfg config.Search
 	}
 
 	SelectRowMsg struct {
@@ -78,6 +79,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case SetTableMsg:
 		m.view.setColumns(msg.columns)
 		m.view.setRows(msg.rows)
+		m.searchCfg = msg.searchCfg
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "enter":
@@ -128,7 +130,7 @@ func SetTable(cfg config.Search, drv DataDriver) tea.Cmd {
 	}
 
 	return func() tea.Msg {
-		return SetTableMsg{rows: rows, columns: columns}
+		return SetTableMsg{rows: rows, columns: columns, searchCfg: cfg}
 	}
 }
 

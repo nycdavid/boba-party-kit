@@ -23,6 +23,7 @@ type (
 		components []tea.Model
 		focus      int
 		typ        string
+		datastore  map[string]string
 
 		searchTable searchTable
 	}
@@ -39,6 +40,7 @@ func New(c *config.Config) *Layout {
 	l := &Layout{
 		config:     c,
 		components: make([]tea.Model, 0),
+		datastore:  make(map[string]string),
 	}
 
 	if c.Init.NamedSearch != "" {

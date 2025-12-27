@@ -8,9 +8,10 @@ type (
 	}
 
 	Init struct {
-		HTTP        *HTTP  `yaml:"http"`
-		File        *File  `yaml:"file"`
-		NamedSearch string `yaml:"named_search"`
+		HTTP        *HTTP    `yaml:"http"`
+		File        *File    `yaml:"file"`
+		NamedSearch string   `yaml:"named_search"`
+		Arguments   []string `yaml:"arguments"`
 	}
 
 	Header struct {

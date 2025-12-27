@@ -3,8 +3,12 @@ init:
 searches:
   - name: transactions
     init:
+      arguments:
+        - budget_id
+        - category_id
       http:
-        url: "https://api.ynab.com/v1/budgets/:budget_id/transactions"
+        url: "https://api.ynab.com/v1/budgets/{{budget_id}}/categories/{{category_id}}/transactions"
+        method: "GET"
         auth:
           header:
             bearer-env-var: "YNAB_API_TOKEN"

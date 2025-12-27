@@ -47,6 +47,9 @@ func (h *HTTP) Fetch() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%s - status code %d", h.url, res.StatusCode)
+	}
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
