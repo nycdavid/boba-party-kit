@@ -3,6 +3,7 @@ package formatdriver
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/itchyny/gojq"
@@ -53,7 +54,14 @@ func (j *TableJSON) Format(data []byte) ([][]string, []string, error) {
 	for _, line := range lines {
 		rowCells := make([]string, len(j.columns))
 		for i, col := range j.columns {
-			rowCells[i] = line[col.Name].(string)
+			switch val := line[col.Name].(type) {
+			case string:
+				rowCells[i] = val
+			case float64:
+				rowCells[i] = strconv.FormatFloat(val, 'f', 2, 64)
+			case nil:
+				rowCells[i] = ""
+			}
 		}
 
 		rows = append(rows, rowCells)

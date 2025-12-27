@@ -35,12 +35,14 @@ searches:
     results:
       table:
         json:
-          rows: ".data.category_groups[]"
+          rows: ".data.category_groups[].categories[]"
           columns:
-            - name: "cgroup_id"
+            - name: "cat_id"
               path: ".id"
-            - name: "cgroup"
+            - name: "category"
               path: ".name"
+            - name: "cgroup"
+              path: ".category_group_name"
     select:
       named_search: transactions
       datastore:
