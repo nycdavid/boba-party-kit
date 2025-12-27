@@ -10,6 +10,10 @@ type (
 	}
 )
 
-func (h *HTTP) FormattedURL(parts []any) string {
-	return fmt.Sprintf(h.URL, parts...)
+func (h *HTTP) FormattedURL(parts []string) string {
+	anys := make([]any, len(parts))
+	for i, p := range parts {
+		anys[i] = p
+	}
+	return fmt.Sprintf(h.URL, anys...)
 }

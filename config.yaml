@@ -3,11 +3,11 @@ init:
 searches:
   - name: transactions
     init:
-      arguments:
+      arguments: # this order matters
         - budget_id
         - category_id
       http:
-        url: "https://api.ynab.com/v1/budgets/{{budget_id}}/categories/{{category_id}}/transactions"
+        url: "https://api.ynab.com/v1/budgets/%s/categories/%s/transactions"
         method: "GET"
         auth:
           header:
@@ -19,12 +19,14 @@ searches:
           columns:
             - name: "Date"
               path: ".date"
-            - name: "Payee name"
+            - name: "payee_name"
               path: ".payee_name"
             - name: "Amount"
               path: ".amount"
   - name: categories
     init:
+      arguments:
+        - budget_id
       http:
         url: "https://api.ynab.com/v1/budgets/%s/categories"
         auth:
@@ -35,12 +37,14 @@ searches:
         json:
           rows: ".data.category_groups[]"
           columns:
-            - name: "ID"
+            - name: "cgroup_id"
               path: ".id"
             - name: "cgroup"
               path: ".name"
     select:
       named_search: transactions
+      datastore:
+        category_id: 0
   - name: budgets
     init:
       http:
@@ -58,9 +62,6 @@ searches:
             - name: name
               path: ".name"
     select:
+      datastore: # instructions on where to store metadata after an entry is selected
+        budget_id: 0 # [key]: [index of column in the results table that contains value]
       named_search: categories
-      http:
-        url: "https://api.ynab.com/v1/budgets/:id"
-        auth:
-          header:
-            bearer-env-var: "YNAB_API_TOKEN"

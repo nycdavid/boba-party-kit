@@ -39,9 +39,10 @@ type (
 	}
 
 	Select struct {
-		NamedSearch string  `yaml:"named_search"`
-		Search      *Search `yaml:"search"`
-		Modal       *Modal  `yaml:"modal"`
+		NamedSearch string         `yaml:"named_search"`
+		Search      *Search        `yaml:"search"`
+		Modal       *Modal         `yaml:"modal"`
+		Datastore   map[string]int `yaml:"datastore"`
 	}
 
 	Modal struct{}
@@ -68,8 +69,9 @@ type (
 
 	SearchInit struct {
 		// SearchInit always needs one type of driver
-		HTTP *HTTP `yaml:"http"`
-		File *File `yaml:"file"`
+		HTTP      *HTTP    `yaml:"http"`
+		File      *File    `yaml:"file"`
+		Arguments []string `yaml:"arguments"`
 	}
 
 	File struct {

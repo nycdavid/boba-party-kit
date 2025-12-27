@@ -137,10 +137,19 @@ func (l *Layout) executeSearch(row []string) tea.Cmd {
 
 	nextSearchCfg := l.config.Searches[i]
 
+	for k, i := range currentSearchCfg.Select.Datastore {
+		l.datastore[k] = row[i]
+	}
+
+	args := make([]string, len(nextSearchCfg.Init.Arguments))
+	for i, arg := range nextSearchCfg.Init.Arguments {
+		args[i] = l.datastore[arg]
+	}
+
 	var drv table.DataDriver
 	if nextSearchCfg.Init.HTTP != nil {
 		h := nextSearchCfg.Init.HTTP
-		drv = datadriver.NewHTTP(h.FormattedURL([]any{row[0]}), h.Auth.Header.BearerEnvVar, h.Method)
+		drv = datadriver.NewHTTP(h.FormattedURL(args), h.Auth.Header.BearerEnvVar, h.Method)
 	} else if nextSearchCfg.Init.File != nil {
 		f := nextSearchCfg.Init.File
 		drv = datadriver.NewFile(*f)
