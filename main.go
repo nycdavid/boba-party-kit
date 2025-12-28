@@ -11,7 +11,12 @@ import (
 )
 
 func main() {
-	b, err := os.ReadFile("config.yaml")
+	fname := os.Args[1]
+	if fname == "" {
+		log.Fatal("please provide path to config file")
+	}
+
+	b, err := os.ReadFile(fname)
 	if err != nil {
 		panic(err)
 	}

@@ -14,19 +14,22 @@ import (
 )
 
 const (
-	LayoutTypeSearch = "search"
+	TypeSearch = "search"
 )
 
 type (
 	Layout struct {
-		config     *config.Config
-		components []tea.Model
-		focus      int
-		typ        string
-		datastore  map[string]string
+		config      *config.Config
+		components  []tea.Model
+		focus       int
+		typ         string
+		currentData datastore
+		stack       []datastore
 
 		searchTable searchTable
 	}
+
+	datastore map[string]string
 
 	searchTable interface {
 		tea.Model
@@ -38,13 +41,13 @@ type (
 
 func New(c *config.Config) *Layout {
 	l := &Layout{
-		config:     c,
-		components: make([]tea.Model, 0),
-		datastore:  make(map[string]string),
+		config:      c,
+		components:  make([]tea.Model, 0),
+		currentData: make(map[string]string),
 	}
 
 	if c.Init.NamedSearch != "" {
-		l.typ = LayoutTypeSearch
+		l.typ = TypeSearch
 		l.components = append(l.components, searchbar.New())
 
 		searchName := c.Init.NamedSearch
@@ -138,12 +141,12 @@ func (l *Layout) executeSearch(row []string) tea.Cmd {
 	nextSearchCfg := l.config.Searches[i]
 
 	for k, i := range currentSearchCfg.Select.Datastore {
-		l.datastore[k] = row[i]
+		l.currentData[k] = row[i]
 	}
 
 	args := make([]string, len(nextSearchCfg.Init.Arguments))
 	for i, arg := range nextSearchCfg.Init.Arguments {
-		args[i] = l.datastore[arg]
+		args[i] = l.currentData[arg]
 	}
 
 	var drv table.DataDriver
