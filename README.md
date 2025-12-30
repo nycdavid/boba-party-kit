@@ -32,6 +32,12 @@ type (
 - `datadriver.HTTP`: makes an HTTP request and returns its response body as `[]byte`
 - `datadriver.File`: reads a file on disk and returns its contents as `[]byte`
 
+## `package dbdriver`
+
+Drivers for fetching data from databases:
+
+- `dbdriver.SQLite`: provides the ability to read/write data in an SQLite database.
+
 ## `package formatdriver`
 
 Various drivers for parsing and formatting structured data. 

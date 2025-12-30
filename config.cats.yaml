@@ -1,0 +1,20 @@
+init:
+  named_search: cat-facts
+searches:
+  - name: cat-facts
+    init:
+      http:
+        url: "https://cat-fact.herokuapp.com/facts"
+        method: "GET"
+        auth:
+          header:
+            bearer-env-var:
+    results:
+      table:
+        json:
+          rows: ""
+          columns:
+            - name: "id"
+              path: "._id"
+            - name: "text"
+              path: ".text"
