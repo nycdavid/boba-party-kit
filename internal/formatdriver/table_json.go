@@ -13,11 +13,11 @@ import (
 type (
 	TableJSON struct {
 		rowRoot string
-		columns []config.Column
+		columns []config.JSONColumn
 	}
 )
 
-func NewTableJSON(rowRoot string, c []config.Column) *TableJSON {
+func NewTableJSON(rowRoot string, c []config.JSONColumn) *TableJSON {
 	return &TableJSON{rowRoot: rowRoot, columns: c}
 }
 

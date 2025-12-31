@@ -8,11 +8,10 @@ type (
 	}
 
 	Init struct {
-		HTTP        *HTTP     `yaml:"http"`
-		File        *File     `yaml:"file"`
-		Database    *Database `yaml:"database"`
-		NamedSearch string    `yaml:"named_search"`
-		Arguments   []string  `yaml:"arguments"`
+		HTTP        *HTTP    `yaml:"http"`
+		File        *File    `yaml:"file"`
+		NamedSearch string   `yaml:"named_search"`
+		Arguments   []string `yaml:"arguments"`
 	}
 
 	Database struct {
@@ -21,7 +20,8 @@ type (
 	}
 
 	SQLite struct {
-		File string `yaml:"file"`
+		File  string `yaml:"file"`
+		Query string `yaml:"query"`
 	}
 
 	Postgres struct {
@@ -62,21 +62,24 @@ type (
 	Modal struct{}
 
 	Table struct {
-		JSON    *JSON    `yaml:"json"`
-		CSV     *CSV     `yaml:"csv"`
-		Rows    string   `yaml:"rows"`
-		Columns []Column `yaml:"columns"`
+		JSON *JSON `yaml:"json"`
+		CSV  *CSV  `yaml:"csv"`
+		SQL  *SQL  `yaml:"sql"`
+	}
+
+	SQL struct {
+		Columns []string `yaml:"columns"`
 	}
 
 	JSON struct {
-		Rows    string   `yaml:"rows"`
-		Columns []Column `yaml:"columns"`
+		Rows    string       `yaml:"rows"`
+		Columns []JSONColumn `yaml:"columns"`
 	}
 
 	CSV struct {
 	}
 
-	Column struct {
+	JSONColumn struct {
 		Name string `yaml:"name"`
 		Path string `yaml:"path"`
 	}
@@ -85,6 +88,7 @@ type (
 		// SearchInit always needs one type of driver
 		HTTP      *HTTP    `yaml:"http"`
 		File      *File    `yaml:"file"`
+		SQLite    *SQLite  `yaml:"sqlite"`
 		Arguments []string `yaml:"arguments"`
 	}
 

@@ -1,1 +1,18 @@
 init:
+  named_search: "db-tables"
+
+searches:
+  - name: "db-tables"
+    init:
+      sqlite:
+        file: "/Users/davidko/projects/minutes/db.dev.sqlite"
+        query: |
+          SELECT name 
+          FROM sqlite_master
+          WHERE type = 'table'
+          ORDER BY name;
+    results:
+      table:
+        sql:
+          columns:
+            - name

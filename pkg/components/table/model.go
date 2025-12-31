@@ -61,6 +61,9 @@ func (m *Model) Init() tea.Cmd {
 	} else if m.searchCfg.Init.File != nil {
 		f := m.searchCfg.Init.File
 		drv = datadriver.NewFile(*f)
+	} else if m.searchCfg.Init.SQLite != nil {
+		s := m.searchCfg.Init.SQLite
+		drv = datadriver.NewSQLite(s.File, s.Query)
 	}
 
 	return SetTable(m.searchCfg, drv)
@@ -120,6 +123,9 @@ func SetTable(cfg config.Search, drv DataDriver) tea.Cmd {
 	if cfg.Results.Table.JSON != nil {
 		tc := cfg.Results.Table.JSON
 		tblFormatter = formatdriver.NewTableJSON(tc.Rows, tc.Columns)
+	} else if cfg.Results.Table.SQL != nil {
+		tc := cfg.Results.Table.SQL
+		tblFormatter = formatdriver.NewTableSQL(tc.Columns)
 	} else {
 		log.Fatal("no table formatdriver selected")
 	}
