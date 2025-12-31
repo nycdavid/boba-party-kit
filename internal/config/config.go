@@ -8,10 +8,24 @@ type (
 	}
 
 	Init struct {
-		HTTP        *HTTP    `yaml:"http"`
-		File        *File    `yaml:"file"`
-		NamedSearch string   `yaml:"named_search"`
-		Arguments   []string `yaml:"arguments"`
+		HTTP        *HTTP     `yaml:"http"`
+		File        *File     `yaml:"file"`
+		Database    *Database `yaml:"database"`
+		NamedSearch string    `yaml:"named_search"`
+		Arguments   []string  `yaml:"arguments"`
+	}
+
+	Database struct {
+		SQLite   *SQLite   `yaml:"sqlite"`
+		Postgres *Postgres `yaml:"postgres"`
+	}
+
+	SQLite struct {
+		File string `yaml:"file"`
+	}
+
+	Postgres struct {
+		Host string `yaml:"host"`
 	}
 
 	Header struct {
